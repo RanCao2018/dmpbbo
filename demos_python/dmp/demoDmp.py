@@ -30,7 +30,7 @@ from functionapproximators.FunctionApproximatorLWR import *
 
 if __name__=='__main__':
 
-    tau = 0.5
+    tau = 5
     n_dims = 2
     y_init = np.linspace(0.0,0.7,n_dims)
     y_attr = np.linspace(0.4,0.5,n_dims)
@@ -43,7 +43,7 @@ if __name__=='__main__':
         
     dmp = Dmp(tau, y_init, y_attr, function_apps)
 
-    tau_exec = 0.7
+    tau_exec = 7
     n_time_steps = 71
     ts = np.linspace(0,tau_exec,n_time_steps)
     
@@ -54,10 +54,10 @@ if __name__=='__main__':
     xds_step = np.zeros([n_time_steps,dmp.dim_])
     
     (x,xd) = dmp.integrateStart()
-    xs_step[0,:] = x;
-    xds_step[0,:] = xd;
+    xs_step[0,:] = x
+    xds_step[0,:] = xd
     for tt in range(1,n_time_steps):
-        (xs_step[tt,:],xds_step[tt,:]) = dmp.integrateStep(dt,xs_step[tt-1,:]); 
+        (xs_step[tt,:],xds_step[tt,:]) = dmp.integrateStep(dt,xs_step[tt-1,:])
 
     print("Plotting")
     

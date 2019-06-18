@@ -14,7 +14,7 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with DmpBbo.  If not, see <http://www.gnu.org/licenses/>.
-# 
+# 生成轨迹（五次多项式插值）；生成通过指定点的轨迹；裁剪轨迹中的一部分
 
 import numpy as np
 import sys
@@ -28,7 +28,7 @@ sys.path.append(lib_path)
 from dmp.dmp_plotting import plotTrajectory
 
 
-class Trajectory:
+class Trajectory:# 定义了轨迹，以及从两点生成轨迹的方法
 
     def __init__(self,  ts, ys, yds=None, ydds=None, misc=None):
         
@@ -38,6 +38,7 @@ class Trajectory:
         
         if yds is None:
             yds = diffnc(ys,dt_mean)
+            #yds = np.gradient
         else:
             assert(ys.shape==yds.shape)
         
@@ -91,7 +92,7 @@ class Trajectory:
     def getRangePerDim(self):
         return self.ys_.max(axis=0)-self.ys_.min(axis=0)
         
-    def crop(self,fro,to,as_times=False):        
+    def crop(self,fro,to,as_times=False): #裁剪某段时间的轨迹
         # Crop trajectory from 'fro' to 'to'
         # if as_times is False, 'fro' to 'to' are interpreted as indices 
         # if as_times is True, 'fro' to 'to' are interpreted as times
@@ -135,7 +136,7 @@ class Trajectory:
             
         
             
-    def generatePolynomialTrajectory(ts, y_from, yd_from, ydd_from, y_to, yd_to, ydd_to):
+    def generatePolynomialTrajectory(ts, y_from, yd_from, ydd_from, y_to, yd_to, ydd_to):#五阶多项式生成轨迹
         
         a0 = y_from
         a1 = yd_from
@@ -172,7 +173,7 @@ class Trajectory:
         assert(3*n_dims==y_yd_ydd_viapoint.size)# Contains y, yd and ydd, so *3
   
         viapoint_time_step = 0
-        while viapoint_time_step<n_time_steps and ts[viapoint_time_step]<viapoint_time:
+        while viapoint_time_step<n_time_steps and ts[viapoint_time_step]<viapoint_time:#找到对应点
             viapoint_time_step+=1
   
         #if (viapoint_time_step>=n_time_steps)
@@ -248,7 +249,7 @@ class Trajectory:
         np.savetxt(directory+"/"+filename,self.asMatrix(),fmt='%1.7f')
    
     @staticmethod
-    def readFromFile(filename, n_dims_misc=0):
+    def readFromFile(filename, n_dims_misc=0):#按列排列：时间；位置；速度；加速度
         data = np.loadtxt(filename)
         
         (n_time_steps, n_cols) = data.shape

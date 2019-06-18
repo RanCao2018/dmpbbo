@@ -14,7 +14,8 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with DmpBbo.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
+#测试
 
 import numpy as np
 import sys
@@ -90,7 +91,7 @@ class DynamicalSystem:
         x_updated  = x + dt*xd_updated
         return (x_updated,xd_updated)
         
-    def  integrateStepRungeKutta(self, dt, x):
+    def integrateStepRungeKutta(self, dt, x):
         # 4th order Runge-Kutta for a 1st order system
         # http://en.wikipedia.org/wiki/Runge-Kutta_method#The_Runge.E2.80.93Kutta_method
         

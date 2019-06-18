@@ -23,7 +23,7 @@ import os
 lib_path = os.path.abspath('../../python/')
 sys.path.append(lib_path)
 
-from dynamicalsystems.DynamicalSystem import DynamicalSystem# 
+from dynamicalsystems.DynamicalSystem import DynamicalSystem
 
 
 class SigmoidSystem(DynamicalSystem):
@@ -49,7 +49,7 @@ class SigmoidSystem(DynamicalSystem):
         super().set_initial_state(y_init)
         self.Ks_ = self.computeKs(initial_state_, max_rate_, inflection_point_time_)
 
-    def computeKs(self,N_0s, r, inflection_point_time_time):
+    def computeKs(self,N_0s, r, inflection_point_time_time): #从截止时间反推K的函数，最大速度已经修改
       # The idea here is that the initial state (called N_0s above), max_rate (r above) and the 
       # inflection_point_time are set by the user.
       # The only parameter that we have left to tune is the "carrying capacity" K.

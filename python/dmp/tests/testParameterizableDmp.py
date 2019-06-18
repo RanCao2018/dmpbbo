@@ -36,10 +36,10 @@ if __name__=='__main__':
     n_time_steps = 51
 
     y_init = np.linspace(0.0,0.7,n_dims)
-    y_attr = np.linspace(0.4,0.5,n_dims)
+    y_attr = np.linspace(0.0,0.7,n_dims)
     
-    ts = np.linspace(0,tau,n_time_steps)
-    y_yd_ydd_viapoint = np.array([-0.2,0.4, 0.0,0.0, 0,0])
+    ts = np.linspace(0,tau,n_time_steps)#(tau-0)/51=0.01s
+    y_yd_ydd_viapoint = np.array([-0.2,0.4, 0.0,0.0, 0.0, 0.0])#期望经过点
     viapoint_time = 0.4*ts[-1]
     traj = Trajectory.generatePolynomialTrajectoryThroughViapoint(ts, y_init, y_yd_ydd_viapoint, viapoint_time, y_attr)
     
@@ -47,7 +47,7 @@ if __name__=='__main__':
     #function_apps = [None]*n_dims
     function_apps = [ FunctionApproximatorRBFN(12,0.7), FunctionApproximatorRBFN(10,0.7)]
     dmp = Dmp(tau, y_init, y_attr, function_apps)
-    
+
     dmp.train(traj)
 
     tau_exec = 0.7
@@ -62,13 +62,13 @@ if __name__=='__main__':
     axs = [ fig.add_subplot(131), fig.add_subplot(132), fig.add_subplot(133) ] 
     
     lines = plotTrajectory(traj.asMatrix(),axs)
-    plt.setp(lines, linestyle='-',  linewidth=4, color=(0.8,0.8,0.8), label='demonstration')
+    plt.setp(lines, linestyle='-',  linewidth=4, color='y', label='demonstration')
     lines = plotTrajectory(traj_ana.asMatrix(),axs)
-    plt.setp(lines, linestyle='-',  linewidth=2, color=(0.6,0.6,0.6), label='reproduced')
+    plt.setp(lines, linestyle='-',  linewidth=2, color='red', label='reproduced')
 
     values = dmp.getParameterVectorSelected()
     print(values)
-    
+
     for ii in range(5):
         # Generate random vector with values between 0.5-1.5
         rand_vector = 0.5 + np.random.random_sample(values.shape)
@@ -83,7 +83,7 @@ if __name__=='__main__':
         plt.setp(lines, linestyle='-',  linewidth=1, color=(0.3,0.3,0.3))
         if ii==0:
             plt.setp(lines, label='perturbed')
-    
+
     plt.show()
 
 

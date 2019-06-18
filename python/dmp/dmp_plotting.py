@@ -68,7 +68,7 @@ def plotDmp(data,fig,forcing_terms_data=[],fa_output_data=[],ext_dims=[],tau=Non
       
         # Plot 'x' for this subsystem (analytical solution and step-by-step integration)
         #fig.suptitle(filename)
-        axs = [];
+        axs = []
         axs.append(fig.add_subplot(3,5,subplot_offsets[i_system]))
         axs.append(fig.add_subplot(3,5,subplot_offsets[i_system]+1))
         if (system_order[i_system]==2):
@@ -79,7 +79,7 @@ def plotDmp(data,fig,forcing_terms_data=[],fa_output_data=[],ext_dims=[],tau=Non
         indices_xds =[i+n_state_length for i in indices_xs] # +n_state_length because xd is in second half
       
         plot_data =  numpy.concatenate((numpy.atleast_2d(ts).T,data[:,indices_xs],data[:,indices_xds]),axis=1)
-        lines = plotDynamicalSystem(plot_data,axs);
+        lines = plotDynamicalSystem(plot_data,axs)
         if (system_names[i_system]=='gating'):
           plt.setp(lines,color='m')
           axs[0].set_ylim([0, 1.1])
@@ -90,7 +90,7 @@ def plotDmp(data,fig,forcing_terms_data=[],fa_output_data=[],ext_dims=[],tau=Non
         for ii in range(len(axs)):
           x = numpy.mean(axs[ii].get_xlim())
           y = numpy.mean(axs[ii].get_ylim())
-          axs[ii].text(x,y,system_names[i_system], horizontalalignment='center');
+          axs[ii].text(x,y,system_names[i_system], horizontalalignment='center')
           if (ii==0):
               axs[ii].set_ylabel(r'$'+system_varname[i_system]+'$')
           if (ii==1):

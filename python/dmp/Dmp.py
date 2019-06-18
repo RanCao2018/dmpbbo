@@ -14,7 +14,7 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with DmpBbo.  If not, see <http://www.gnu.org/licenses/>.
-# 
+# 建立dmp模型；进行训练；更改训练权重参数；
 
 import numpy as np
 import sys
@@ -36,15 +36,15 @@ from dynamicalsystems.SpringDamperSystem import SpringDamperSystem
 
 class Dmp(DynamicalSystem,Parameterizable):
 
-    def __init__(self,  tau, y_init, y_attr, function_apps, name="Dmp", sigmoid_max_rate=-20,forcing_term_scaling="NO_SCALING"):        
+    def __init__(self,  tau, y_init, y_attr, function_apps, name="Dmp", sigmoid_max_rate=-2,forcing_term_scaling="NO_SCALING"):
         
         super().__init__(1, tau, y_init, y_attr, name)
         
-        dim_orig = self.dim_orig_
+        dim_orig = self.dim_orig_#仅包含位置的维度
 
-        self.goal_system_  = ExponentialSystem(tau,y_init,y_attr,15,'goal')
+        self.goal_system_ = ExponentialSystem(tau,y_init,y_attr,15,'goal')
         self.gating_system_ = SigmoidSystem(tau,np.ones(1),sigmoid_max_rate,0.9*tau,'gating') 
-        self.phase_system_  = TimeSystem(tau,False,'phase')
+        self.phase_system_ = TimeSystem(tau,False,'phase')
         alpha = 20.0
         self.spring_system_ = SpringDamperSystem(tau,y_init,y_attr,alpha)
         
@@ -54,7 +54,7 @@ class Dmp(DynamicalSystem,Parameterizable):
         
         self.ts_train_ = None
 
-        # Make room for the subsystems
+        # Make room for the subsystems 整个DMP的维数
         self.dim_ = 3*dim_orig+2
         
         self.SPRING    = np.arange(0*dim_orig+0, 0*dim_orig+0 +2*dim_orig)
@@ -168,7 +168,7 @@ class Dmp(DynamicalSystem,Parameterizable):
                     fa_output[:,i_fa] = self.function_approximators_[i_fa].predict(phase_state)
         return fa_output
         
-    def analyticalSolution(self,ts=None):
+    def analyticalSolution(self,ts=None): #生成轨迹
         if ts is None:
             if self.ts_train_ is None:
                 print("Neither the argument 'ts' nor the member variable self.ts_train_ was set. Returning None.")
@@ -214,6 +214,7 @@ class Dmp(DynamicalSystem,Parameterizable):
             xds_goal = np.zeros(xs_goal.shape)
         else:
             # Integrate goal system and get current goal state
+            self.goal_system_.set_attractor_state(self.attractor_state_)# 补充，用来更新解析算法中的目标点状态
             (xs_goal,xds_goal) = self.goal_system_.analyticalSolution(ts)
             
             
@@ -294,7 +295,11 @@ class Dmp(DynamicalSystem,Parameterizable):
         (fa_input_phase, f_target) = self.computeFunctionApproximatorInputsAndTargets(trajectory)
   
         for dd in range(self.dim_orig_):
-
+        # It should be noted that if multiple demonstrations of a trajectory exist, even at different scales and
+        # timing, they can be averaged together in the above locally weighted regression after the ftarget information for every trajectory at every time step has
+        # been obtained. This averaging is possible due to the invariance properties
+        # mentioned above. (2013)
+        # 简单来说这里的训练示例轨迹仅有一条，即为期望轨迹。期望轨迹可以通过对多条轨迹进行概率统计分析得到。
             fa_target = f_target[:,dd]
             self.function_approximators_[dd].train(fa_input_phase,fa_target)
         

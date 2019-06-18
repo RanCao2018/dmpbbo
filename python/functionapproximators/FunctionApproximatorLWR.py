@@ -140,7 +140,7 @@ class FunctionApproximatorLWR(FunctionApproximator):
             return self.model_offsets_
         else:
             warning('FunctionApproximatorLWR is not trained.')
-            return [];
+            return []
         
     def setParameterVectorSelected(self,values):
         if self.is_trained_:

@@ -107,7 +107,7 @@ if __name__=='__main__':
         ts = np.linspace(0,tau_exec,n_time_steps)
     
         # INTEGRATE DMP TO GET REPRODUCED TRAJECTORY
-        for goal_number in range(7):
+        for goal_number in range(2):
             # 0 =>  1.5
             # 1 =>  1.0
             # 2 =>  0.5
@@ -159,7 +159,7 @@ if __name__=='__main__':
         lines.extend(plotTrajectory(traj_dim1,axs2))
         plt.setp(lines, linestyle='-',  linewidth=8, color=(0.4,0.4,0.4))
         
-        for goal_number in range(7):
+        for goal_number in range(2):
             
             scalings = ["NO_SCALING","G_MINUS_Y0_SCALING","AMPLITUDE_SCALING"]
             for scaling in scalings:
