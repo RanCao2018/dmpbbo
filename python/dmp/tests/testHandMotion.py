@@ -9,7 +9,9 @@ sys.path.append(lib_path)
 from dmp.dmp_plotting import *
 from dmp.Dmp import *
 from dmp.Trajectory import *
-from functionapproximators.FunctionApproximatorRBFN import *
+#from functionapproximators.FunctionApproximatorRBFN import *
+from functionapproximators.FunctionApproximatorGMR import *
+from dmp.tests.plotMVG import *
 
 def readFromMotionFile(filename, sensor, cutoff):# 按列排列：时间；位置。默认一个文件仅包含一条轨迹
     data = np.loadtxt(filename)
@@ -41,7 +43,8 @@ if __name__=='__main__':
     tau = traj_fil.duration()
 
     #function_apps = [None]*n_dims
-    function_apps = [ FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7) ]
+    # function_apps = [ FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7) ]
+    function_apps = [ FunctionApproximatorGMR(13,0.7), FunctionApproximatorGMR(13,0.7), FunctionApproximatorGMR(13,0.7) ]
     dmp = Dmp(tau, y_init, y_attr, function_apps)
 
     dmp.train(traj_fil)
@@ -49,10 +52,12 @@ if __name__=='__main__':
     tau_exec = traj_fil.duration()
     n_time_steps = tau_exec/0.005 #由间隔时间决定
     ts = np.linspace(0.0,tau_exec,n_time_steps) # 使用linespace时起始点和终止点应为浮点型，否则会有精度损失
-    y_attr_scaled = np.array([10.0, 10.0, 10.0])
-    dmp.set_attractor_state(y_attr_scaled) # 空间不变性
+
+    #y_attr_scaled = np.array([10.0, 10.0, 10.0])
+
+    dmp.set_attractor_state(y_attr) # 空间不变性
     dmp.set_tau(tau_exec) # 时间不变性
-    ( xs_ana, xds_ana, forcing_terms_ana, fa_outputs_ana) = dmp.analyticalSolution(ts)
+    (xs_ana, xds_ana, forcing_terms_ana, fa_outputs_ana) = dmp.analyticalSolution(ts)
     traj_ana = dmp.statesAsTrajectory(ts, xs_ana, xds_ana)
 
     # 画子系统轨迹图
@@ -80,8 +85,8 @@ if __name__=='__main__':
     plt.setp(lines2, linestyle='-',  linewidth=1, color='red', label='reproduced')
 
     axs1.legend([lines1[0], lines2[0]], ('demonstration', 'reproduced'))
-    values = dmp.getParameterVectorSelected()
-    print(values)
+    # values = dmp.getParameterVectorSelected()
+    # print(values)
 
     # 绘制参数对系统影响
     # for ii in range(5):
@@ -99,6 +104,11 @@ if __name__=='__main__':
     #     if ii==0:
     #         plt.setp(lines, label='perturbed')
 
-    plt.show()
+    values = dmp.getParameterVectorSelected()
+    fig,ax = plt.subplots()
+    plot_spherical_gmm(ax, values[0], values[1])
 
+    plot_data(dmp.ftarget[:,0:2])
+
+    plt.show()
     #traj_ana.saveToFile('.','handMotionGeneration_space.txt')

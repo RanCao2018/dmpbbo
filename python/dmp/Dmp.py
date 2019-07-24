@@ -63,6 +63,7 @@ class Dmp(DynamicalSystem,Parameterizable):
         self.GOAL      = np.arange(2*dim_orig+0, 2*dim_orig+0 +dim_orig)
         self.PHASE     = np.arange(3*dim_orig+0, 3*dim_orig+0 +       1)
         self.GATING    = np.arange(3*dim_orig+1, 3*dim_orig+1 +       1)
+        self.ftarget   = None
         #print(self.SPRING)
         #print(self.SPRING_Y)
         #print(self.SPRING_Z)
@@ -293,6 +294,7 @@ class Dmp(DynamicalSystem,Parameterizable):
         self.trajectory_amplitudes_ = trajectory.getRangePerDim()
   
         (fa_input_phase, f_target) = self.computeFunctionApproximatorInputsAndTargets(trajectory)
+        self.ftarget = np.hstack([fa_input_phase, f_target])
   
         for dd in range(self.dim_orig_):
         # It should be noted that if multiple demonstrations of a trajectory exist, even at different scales and
