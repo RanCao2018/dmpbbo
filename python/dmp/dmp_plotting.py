@@ -164,15 +164,15 @@ def plotTrajectory(trajectory,axs,n_misc=0):
     time_index = 0;
     lines = axs[0].plot(trajectory[:,time_index],trajectory[:,1:n_dims+1], '-')
     axs[0].set_xlabel('time (s)');
-    axs[0].set_ylabel('y');
+    axs[0].set_ylabel('angle');
     if (len(axs)>1):
       lines[len(lines):] = axs[1].plot(trajectory[:,time_index],trajectory[:,n_dims+1:2*n_dims+1], '-')
       axs[1].set_xlabel('time (s)');
-      axs[1].set_ylabel('yd');
+      axs[1].set_ylabel('angular velocity');
     if (len(axs)>2):
       lines[len(lines):] = axs[2].plot(trajectory[:,time_index],trajectory[:,2*n_dims+1:3*n_dims+1], '-')
       axs[2].set_xlabel('time (s)');
-      axs[2].set_ylabel('ydd');
+      axs[2].set_ylabel('angular acceleration');
       
     if n_misc>0 and len(axs)>3:
       lines[len(lines):] = axs[3].plot(trajectory[:,time_index],trajectory[:,3*n_dims+1:], '-')

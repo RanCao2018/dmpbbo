@@ -9,7 +9,7 @@ sys.path.append(lib_path)
 from dmp.dmp_plotting import *
 from dmp.Dmp import *
 from dmp.Trajectory import *
-#from functionapproximators.FunctionApproximatorRBFN import *
+from functionapproximators.FunctionApproximatorRBFN import *
 from functionapproximators.FunctionApproximatorGMR import *
 from dmp.tests.plotMVG import *
 
@@ -20,19 +20,19 @@ def readFromMotionFile(filename, sensor, cutoff):# 按列排列：时间；位�
     n_dims = len(sensor)
 
     time = n_time_steps
-
+# time
     ts = data[0:time,0].copy()
     ts -= data[0,0]
-
+# data
     ys = data[0:time, sensor]
-    ys_filter = butter_lowpass_filter(ys, cutoff, 5000)# buttworth 低通滤波器（截止频率：100HZ，采样频率：5000HZ）
+    ys_filter = butter_lowpass_filter(ys, cutoff, 200)# buttworth 低通滤波器（截止频率：50HZ，采样频率：2000）
 
     return Trajectory(ts, ys_filter)
 
 if __name__=='__main__':
 
     sensor = [4,5,6]#手册上的传感器编号+1
-    cutoff = 50 #设置截止频率
+    cutoff = 1 #设置截止频率
     traj_fil = readFromMotionFile("handMotion1.txt", sensor, cutoff)
     # traj_fil2 = readFromMotionFile("handMotion1.txt", sensor, 500)
     # traj_fil3 = readFromMotionFile("handMotion1.txt", sensor, 50)
@@ -43,8 +43,8 @@ if __name__=='__main__':
     tau = traj_fil.duration()
 
     #function_apps = [None]*n_dims
-    # function_apps = [ FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7), FunctionApproximatorRBFN(30,0.7) ]
-    function_apps = [ FunctionApproximatorGMR(13,0.7), FunctionApproximatorGMR(13,0.7), FunctionApproximatorGMR(13,0.7) ]
+    function_apps = [ FunctionApproximatorRBFN(20,0.7), FunctionApproximatorRBFN(20,0.7), FunctionApproximatorRBFN(20,0.7) ]
+    #function_apps = [ FunctionApproximatorGMR(7,0.7), FunctionApproximatorGMR(7,0.7), FunctionApproximatorGMR(7,0.7) ]
     dmp = Dmp(tau, y_init, y_attr, function_apps)
 
     dmp.train(traj_fil)
@@ -72,7 +72,7 @@ if __name__=='__main__':
     axs = [ fig.add_subplot(311), fig.add_subplot(312), fig.add_subplot(313) ]
     axs1, axs2, axs3 = axs
     lines1 = plotTrajectory(traj_fil.asMatrix(),axs)
-    plt.setp(lines1, linestyle='-',  linewidth=1, color='y', label='demonstration')
+    plt.setp(lines1, linestyle='-',  linewidth=1, color='black', label='demonstration')
 
     # lines1 = plotTrajectory(traj_fil.asMatrix(),axs)
     # p1 = plt.setp(lines1, linestyle='-',  linewidth=1, color='r', label='cutoff_100')
@@ -82,7 +82,7 @@ if __name__=='__main__':
     # p3 = plt.setp(lines3, linestyle='-',  linewidth=1, color='green', label='cutoff_50')
 
     lines2 = plotTrajectory(traj_ana.asMatrix(),axs)
-    plt.setp(lines2, linestyle='-',  linewidth=1, color='red', label='reproduced')
+    plt.setp(lines2, linestyle='-.',  linewidth=1, color='black', label='reproduced')
 
     axs1.legend([lines1[0], lines2[0]], ('demonstration', 'reproduced'))
     # values = dmp.getParameterVectorSelected()
@@ -106,7 +106,7 @@ if __name__=='__main__':
 
     values = dmp.getParameterVectorSelected()
     fig,ax = plt.subplots()
-    plot_spherical_gmm(ax, values[0], values[1])
+    #plot_spherical_gmm(ax, values[0], values[1])
 
     plot_data(dmp.ftarget[:,0:2])
 

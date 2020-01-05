@@ -313,7 +313,7 @@ def butter_lowpass(cutoff, fs, order=3):
     return b, a
 
 
-def butter_lowpass_filter(data, cutoff, fs, order=3):
+def butter_lowpass_filter(data, cutoff, fs, order=6):
     # http://scipy.github.io/old-wiki/pages/Cookbook/ButterworthBandpass
     b, a = butter_lowpass(cutoff, fs, order=order)
     y = filtfilt(b, a, data, axis=0)

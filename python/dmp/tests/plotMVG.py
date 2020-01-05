@@ -18,6 +18,11 @@ def plot_data(data):
         return
     plt.plot(data[:,0],data[:,1],'b')
 
+def plot_kmeans(data, cluster):
+    cluster_num = np.unique(cluster).size
+    for i in range(cluster_num):
+        plt.scatter(data[np.argwhere(cluster==i),0],data[np.argwhere(cluster==i),1])
+
 def plot_spherical_gmm(ax, means, covariance, color='r', transparancy=255):
     means = means.T
     num_GM = means.shape[1]
